@@ -1,0 +1,69 @@
+---
+kind: Template
+apiVersion: v1
+metadata:
+  name: boinc
+objects:
+- kind: PersistentVolumeClaim
+  apiVersion: v1
+  metadata:
+    name: boinc
+    labels:
+      app: boinc
+  spec:
+    accessModes:
+      - ReadOnlyMany
+    resources:
+      requests:
+        storage: 5Gi
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: boinc
+    labels:
+      app: boinc
+  spec:
+    replicas: 1
+    template:
+      metadata:
+        name: boinc
+        labels:
+          app: boinc
+      spec:
+        containers:
+          - name: boinc
+            image: boinc/client
+            imagePullPolicy: Always
+            env:
+            - name: BOINC_CMD_LINE_OPTIONS
+              value: "--attach_project ${BOINC_CMD_LINE_OPTIONS_PROJECT} ${BOINC_CMD_LINE_OPTIONS_ACCOUNT_KEY}"
+            volumeMounts:
+              - mountPath: /var/lib/boinc
+                name: boinc
+            ports:
+            - containerPort: 80
+              name: http
+              protocol: TCP
+            - containerPort: 443
+              name: https
+              protocol: TCP
+            - containerPort: 31416
+              name: manager
+              protocol: TCP
+        volumes:
+          - name: boinc
+            persistentVolumeClaim:
+              claimName: boinc
+    selector:
+      matchLabels:
+        app: boinc
+parameters:
+  - name: BOINC_CMD_LINE_OPTIONS_PROJECT
+    displayName: Project
+    description: Project
+    required: true
+    value: "http://boinc.bakerlab.org/rosetta"
+  - name: BOINC_CMD_LINE_OPTIONS_ACCOUNT_KEY
+    displayName: Account-key
+    description: Account-key
+    required: true
