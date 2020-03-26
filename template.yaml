@@ -4,32 +4,24 @@ apiVersion: v1
 metadata:
   name: boinc
 objects:
-- kind: PersistentVolumeClaim
-  apiVersion: v1
-  metadata:
-    name: boinc
-    labels:
-      app: boinc
-  spec:
-    accessModes:
-      - ReadOnlyMany
-    resources:
-      requests:
-        storage: 5Gi
 - apiVersion: apps/v1
-  kind: Deployment
+  kind: StatefulSet
   metadata:
     name: boinc
     labels:
       app: boinc
   spec:
+    serviceName: boinc
     replicas: 1
+    selector:
+      matchLabels:
+        app: boinc
     template:
       metadata:
-        name: boinc
         labels:
           app: boinc
       spec:
+        terminationGracePeriodSeconds: 10
         containers:
           - name: boinc
             image: boinc/client
@@ -50,13 +42,15 @@ objects:
             - containerPort: 31416
               name: manager
               protocol: TCP
-        volumes:
-          - name: boinc
-            persistentVolumeClaim:
-              claimName: boinc
-    selector:
-      matchLabels:
-        app: boinc
+    volumeClaimTemplates:
+      - metadata:
+          name: boinc
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 10Gi
 parameters:
   - name: BOINC_CMD_LINE_OPTIONS_PROJECT
     displayName: Project
