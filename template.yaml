@@ -12,7 +12,7 @@ objects:
       app: boinc
   spec:
     serviceName: boinc
-    replicas: 1
+    replicas: "${BOINC_CLIENT_NUMBER}"
     selector:
       matchLabels:
         app: boinc
@@ -52,6 +52,11 @@ objects:
             requests:
               storage: 10Gi
 parameters:
+  - name: BOINC_CLIENT_NUMBER
+    displayName: Number of Boinc Clients
+    description: Number of Boinc Clients
+    required: true
+    value: "1"
   - name: BOINC_CMD_LINE_OPTIONS_PROJECT
     displayName: Project
     description: Project
