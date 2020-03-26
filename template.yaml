@@ -57,6 +57,21 @@ objects:
     selector:
       matchLabels:
         app: boinc
+- kind: HorizontalPodAutoscaler
+  apiVersion: autoscaling/v2beta1
+  metadata:
+    name: boinc-hpa
+  spec:
+    scaleTargetRef:
+      kind: Deployment
+      name: boinc
+    minReplicas: 1
+    maxReplicas: 10
+    metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: 80
 parameters:
   - name: BOINC_CMD_LINE_OPTIONS_PROJECT
     displayName: Project
