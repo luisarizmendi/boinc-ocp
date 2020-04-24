@@ -12,7 +12,7 @@ objects:
       app: boinc
   spec:
     serviceName: boinc
-    replicas: "${BOINC_CLIENT_NUMBER}"
+    replicas: ${BOINC_CLIENT_NUMBER}
     selector:
       matchLabels:
         app: boinc
