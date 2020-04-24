@@ -4,8 +4,10 @@ Run BOINC CLIENT on OpenShift
 At this moment the easier way to run it is using the template. You will need the project URL that you want to join in (ie. http://boinc.bakerlab.org/rosetta) and your "account key" (see below how to get it with your BOINC credentials)
 
 ```
-oc process -f template.yaml -p BOINC_CMD_LINE_OPTIONS_PROJECT=<project_URL> -p BOINC_CMD_LINE_OPTIONS_ACCOUNT_KEY=<account_key> -p BOINC_CLIENT_NUMBER=<number_of_boinc_clients> | oc create -f - 
+oc process -f template.yaml -p BOINC_CMD_LINE_OPTIONS_PROJECT=<project_URL> -p BOINC_CMD_LINE_OPTIONS_ACCOUNT_KEY=<account_key> | oc create -f - 
 ```
+
+It will launch a single replica, you can scale out the StatefulSet after the deployment.
 
 Getting your "Account ID"
 =====================
